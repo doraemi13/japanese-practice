@@ -12,6 +12,7 @@
     .feedback { font-weight: bold; margin-top: 0.3em; }
     .correct { color: green; }
     .incorrect { color: red; }
+    mark { background-color: #ffe28a; padding: 0 4px; border-radius: 4px; }
     #pet { text-align: center; margin-top: 2em; }
     #pet img { width: 140px; }
     #npc { margin-top: 1em; padding: 1em; background: #fff; border: 1px dashed #aaa; }
@@ -41,9 +42,7 @@
 
   <div id="npc">町田啓太：「今日も君なら、できるって信じてる。」</div>
 
-  <!-- 題庫檔案放這裡，記得與 index.html 同目錄 -->
   <script src="days_full.js"></script>
-
   <script>
     let streak = 0, love = 0, hp = 100, rescueUsed = false;
 
@@ -53,17 +52,16 @@
       const summary = document.getElementById("feedback-summary");
       container.innerHTML = ""; summary.innerHTML = ""; streak = 0; rescueUsed = false;
 
-      if (!quiz) {
-        container.innerHTML = "<p>⚠️ 尚未建立此日的題庫。</p>";
-        return;
-      }
-
       quiz.forEach((q, i) => {
         const block = document.createElement("div");
         block.className = "question";
-        block.innerHTML = `<p>${q.q}</p>` + q.opts.map(opt =>
-          `<button onclick="checkAnswer('${opt}','${q.a}','${q.exp}',this)"> ${opt}</button>`
-        ).join('') + `<div class='feedback' id='fb-${i}'></div>`;
+        block.innerHTML = `
+          <p><strong>Q${i+1}：</strong> ${q.q}</p>
+          ${q.opts.map(opt =>
+            `<button onclick="checkAnswer('${opt}','${q.a}',${JSON.stringify(q.exp)},this)"> ${opt}</button>`
+          ).join('')}
+          <div class='feedback' id='fb-${i}'></div>
+        `;
         container.appendChild(block);
       });
     }
@@ -71,14 +69,14 @@
     function checkAnswer(choice, answer, exp, btn) {
       const fb = btn.parentElement.querySelector(".feedback");
       if (choice === answer) {
-        fb.innerHTML = `<span class='correct'>正解です！</span><br>解析：${exp}`;
+        fb.innerHTML = `<span class='correct'>正解です！</span><br>📝 說明：${exp.explain}<br>🗣 例句：${exp.example.jp}<br>📘 中文：${exp.example.zh}<br>📌 用法：${exp.whenToUse}`;
         streak++; love += 5;
       } else if (!rescueUsed) {
         fb.innerHTML = `<span class='incorrect'>錯了…不過Keita說：「再挑戰一次吧♡」</span>`;
         rescueUsed = true;
         return;
       } else {
-        fb.innerHTML = `<span class='incorrect'>不正解。正解是：${answer}。<br>解析：${exp}</span>`;
+        fb.innerHTML = `<span class='incorrect'>不正解。正解是：${answer}。<br>📝 說明：${exp.explain}<br>🗣 例句：${exp.example.jp}<br>📘 中文：${exp.example.zh}<br>📌 用法：${exp.whenToUse}`;
         streak = 0;
       }
 
@@ -102,7 +100,6 @@
       }
     }
 
-    // 預設載入 Day 1
     loadDay("1");
   </script>
 </body>
