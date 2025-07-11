@@ -1,0 +1,30 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>Shadowing 模擬對話</title>
+  <style>
+    body { font-family: sans-serif; padding: 2em; background: #f0f8ff; }
+    .dialogue { margin: 1em 0; padding: 1em; border: 1px solid #ccc; background: #fff; }
+    .role { font-weight: bold; }
+    .controls { margin-top: 1em; }
+  </style>
+</head>
+<body>
+  <h1>🎤 Shadowing 練習 - 模擬對話</h1>
+  <div class="dialogue">
+    <p><span class="role">町田啓太：</span>「今日は来てくれてありがとう。」</p>
+    <audio controls>
+      <source src="audio/keita01.mp3" type="audio/mpeg">
+      このブラウザは音声再生に対応していません。
+    </audio>
+  </div>
+  <div class="dialogue">
+    <p><span class="role">あなた：</span>「こちらこそ、お会いできて光栄です。」</p>
+    <div class="controls">
+      <button onclick="alert('次のセリフへ')">次へ ➡</button>
+    </div>
+  </div>
+</body>
+</html>

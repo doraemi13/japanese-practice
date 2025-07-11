@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -12,10 +13,10 @@
     .feedback { font-weight: bold; margin-top: 0.3em; }
     .correct { color: green; }
     .incorrect { color: red; }
-    mark { background-color: #ffe28a; padding: 0 4px; border-radius: 4px; }
     #pet { text-align: center; margin-top: 2em; }
     #pet img { width: 140px; }
     #npc { margin-top: 1em; padding: 1em; background: #fff; border: 1px dashed #aaa; }
+    mark { background-color: #fceabb; }
   </style>
 </head>
 <body>
@@ -55,13 +56,9 @@
       quiz.forEach((q, i) => {
         const block = document.createElement("div");
         block.className = "question";
-        block.innerHTML = `
-          <p><strong>Q${i+1}：</strong> ${q.q}</p>
-          ${q.opts.map(opt =>
-            `<button onclick="checkAnswer('${opt}','${q.a}',${JSON.stringify(q.exp)},this)"> ${opt}</button>`
-          ).join('')}
-          <div class='feedback' id='fb-${i}'></div>
-        `;
+        block.innerHTML = `<p>${q.q}</p>` + q.opts.map(opt =>
+          `<button onclick="checkAnswer('${opt}','${q.a}',${JSON.stringify(q.exp)},this)"> ${opt}</button>`
+        ).join('') + `<div class='feedback' id='fb-${i}'></div>`;
         container.appendChild(block);
       });
     }
@@ -69,21 +66,28 @@
     function checkAnswer(choice, answer, exp, btn) {
       const fb = btn.parentElement.querySelector(".feedback");
       if (choice === answer) {
-        fb.innerHTML = `<span class='correct'>正解です！</span><br>📝 說明：${exp.explain}<br>🗣 例句：${exp.example.jp}<br>📘 中文：${exp.example.zh}<br>📌 用法：${exp.whenToUse}`;
+        fb.innerHTML = `<span class='correct'>正解です！</span><br>
+        💡 說明：${exp.explain}<br>
+        📝 例句：${exp.example.jp}<br>
+        📘 翻譯：${exp.example.zh}<br>
+        ⏰ 使用時機：${exp.whenToUse}`;
         streak++; love += 5;
       } else if (!rescueUsed) {
         fb.innerHTML = `<span class='incorrect'>錯了…不過Keita說：「再挑戰一次吧♡」</span>`;
         rescueUsed = true;
         return;
       } else {
-        fb.innerHTML = `<span class='incorrect'>不正解。正解是：${answer}。<br>📝 說明：${exp.explain}<br>🗣 例句：${exp.example.jp}<br>📘 中文：${exp.example.zh}<br>📌 用法：${exp.whenToUse}`;
+        fb.innerHTML = `<span class='incorrect'>不正解。正解是：${answer}。<br>
+        💡 說明：${exp.explain}<br>
+        📝 例句：${exp.example.jp}<br>
+        📘 翻譯：${exp.example.zh}<br>
+        ⏰ 使用時機：${exp.whenToUse}`;
         streak = 0;
       }
 
       hp = Math.max(10, hp - 2);
       document.getElementById("hp").textContent = hp;
       document.getElementById("love").textContent = love;
-
       triggerEvent(streak);
     }
 
@@ -104,4 +108,3 @@
   </script>
 </body>
 </html>
-
