@@ -1,0 +1,78 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>日文練習 Day 1</title>
+  <style>
+    body { font-family: sans-serif; line-height: 1.6; padding: 20px; }
+    h1 { font-size: 1.8em; }
+    .question { margin: 20px 0; }
+    .choices button { margin: 5px; display: block; }
+    .feedback { margin-top: 10px; font-weight: bold; }
+    .correct { color: green; }
+    .incorrect { color: red; }
+    input[type="text"] { width: 100%; padding: 5px; }
+  </style>
+</head>
+<body>
+  <h1>📘 日文練習 Day 1</h1>
+
+  <div class="question" id="q1">
+    <p>Q1. 「〜わけではない」這個文型最常用於哪種語氣？</p>
+    <div class="choices">
+      <button onclick="checkAnswer(this, 'B', 'q1')">A. 決定斷言</button>
+      <button onclick="checkAnswer(this, 'B', 'q1')">B. 柔和否定</button>
+      <button onclick="checkAnswer(this, 'B', 'q1')">C. 強烈反對</button>
+      <button onclick="checkAnswer(this, 'B', 'q1')">D. 客觀敘述</button>
+    </div>
+    <div class="feedback" id="feedback-q1"></div>
+  </div>
+
+  <div class="question" id="q2">
+    <p>Q2. 下列哪一句是對上司較自然的道歉語句？</p>
+    <div class="choices">
+      <button onclick="checkAnswer(this, 'C', 'q2')">A. すみません、遅くなりました。</button>
+      <button onclick="checkAnswer(this, 'C', 'q2')">B. ごめんなさい、遅れました。</button>
+      <button onclick="checkAnswer(this, 'C', 'q2')">C. 恐れ入ります、遅れてしまいました。</button>
+      <button onclick="checkAnswer(this, 'C', 'q2')">D. ちょっと遅れちゃって…すみません。</button>
+    </div>
+    <div class="feedback" id="feedback-q2"></div>
+  </div>
+
+  <div class="question" id="q6">
+    <p>Q6. 請將下列句子用敬語改寫：<br>「田中さんは明日会社に来る。」</p>
+    <input type="text" id="input-q6">
+    <button onclick="checkTextAnswer('q6', '田中さんは明日会社にいらっしゃいます。')">送出</button>
+    <div class="feedback" id="feedback-q6"></div>
+  </div>
+
+  <script>
+    function checkAnswer(btn, correct, qid) {
+      const feedback = document.getElementById(`feedback-${qid}`);
+      const answer = btn.textContent.trim()[0];
+      if (answer === correct) {
+        feedback.textContent = '正解です！';
+        feedback.className = 'feedback correct';
+      } else {
+        feedback.textContent = `不正解。正しい答えは ${correct} です。`;
+        feedback.className = 'feedback incorrect';
+      }
+    }
+
+    function checkTextAnswer(qid, correct) {
+      const input = document.getElementById(`input-${qid}`);
+      const feedback = document.getElementById(`feedback-${qid}`);
+      const ans = input.value.trim();
+      if (ans === correct) {
+        feedback.textContent = '正解です！完璧！';
+        feedback.className = 'feedback correct';
+      } else {
+        feedback.textContent = `不正解。模範解答：${correct}`;
+        feedback.className = 'feedback incorrect';
+      }
+    }
+  </script>
+</body>
+</html>
