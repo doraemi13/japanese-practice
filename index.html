@@ -16,6 +16,8 @@
     #pet { text-align: center; margin-top: 2em; }
     #pet img { width: 140px; }
     #npc { margin-top: 1em; padding: 1em; background: #fff; border: 1px dashed #aaa; }
+    ruby rt { font-size: 0.6em; color: #999; }
+    .question-sentence { font-weight: bold; }
   </style>
 </head>
 <body>
@@ -55,24 +57,27 @@
       quiz.forEach((q, i) => {
         const block = document.createElement("div");
         block.className = "question";
-        block.innerHTML = `<p>${q.q}</p>` + q.opts.map(opt =>
-          `<button onclick="checkAnswer('${opt}','${q.a}','${q.exp}','${q.usage}','${q.jp}','fb-${i}',this)"> ${opt}</button>`
-        ).join('') + `<div class='feedback' id='fb-${i}'></div>`;
+        block.innerHTML = `
+          <p class='question-sentence'>${q.sentence}</p>
+          <p>${q.q}</p>` +
+          q.opts.map(opt =>
+            `<button onclick="checkAnswer('${opt}','${q.a}','${q.exp}','${q.sentence}','fb-${i}',this)"> ${opt}</button>`
+          ).join('') + `<div class='feedback' id='fb-${i}'></div>`;
         container.appendChild(block);
       });
     }
 
-    function checkAnswer(choice, answer, exp, usage, jp, fbId, btn) {
-      const fb = document.getElementById(fbId);
+    function checkAnswer(choice, answer, exp, sentence, id, btn) {
+      const fb = document.getElementById(id);
       if (choice === answer) {
-        fb.innerHTML = `<span class='correct'>正解です！</span><br>解析：${exp}<br>使用時機：${usage}<br>例句：${jp}`;
+        fb.innerHTML = `<span class='correct'>正解です！</span><br>例句：${sentence}<br>解析：${exp}`;
         streak++; love += 5;
       } else if (!rescueUsed) {
-        fb.innerHTML = `<span class='incorrect'>錯了…但 Keita 說：「再挑戰一次吧♡」</span>`;
+        fb.innerHTML = `<span class='incorrect'>錯了…不過Keita說：「再挑戰一次吧♡」</span>`;
         rescueUsed = true;
         return;
       } else {
-        fb.innerHTML = `<span class='incorrect'>不正解。正解是：${answer}。<br>解析：${exp}<br>使用時機：${usage}<br>例句：${jp}</span>`;
+        fb.innerHTML = `<span class='incorrect'>不正解。正解是：${answer}。<br>例句：${sentence}<br>解析：${exp}</span>`;
         streak = 0;
       }
 
