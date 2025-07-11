@@ -16,7 +16,6 @@
     #pet { text-align: center; margin-top: 2em; }
     #pet img { width: 140px; }
     #npc { margin-top: 1em; padding: 1em; background: #fff; border: 1px dashed #aaa; }
-    mark { background-color: #fceabb; }
   </style>
 </head>
 <body>
@@ -51,43 +50,43 @@
       const quiz = days[day];
       const container = document.getElementById("quiz-area");
       const summary = document.getElementById("feedback-summary");
-      container.innerHTML = ""; summary.innerHTML = ""; streak = 0; rescueUsed = false;
+      container.innerHTML = ""; summary.innerHTML = ""; streak = 0;
 
       quiz.forEach((q, i) => {
         const block = document.createElement("div");
         block.className = "question";
         block.innerHTML = `<p>${q.q}</p>` + q.opts.map(opt =>
-          `<button onclick="checkAnswer('${opt}','${q.a}',${JSON.stringify(q.exp)},this)"> ${opt}</button>`
+          `<button onclick="checkAnswer('${opt}','${q.a}','${q.exp}','${q.usage}','${q.example}',this)"> ${opt}</button>`
         ).join('') + `<div class='feedback' id='fb-${i}'></div>`;
         container.appendChild(block);
       });
     }
 
-    function checkAnswer(choice, answer, exp, btn) {
+    function checkAnswer(choice, answer, exp, usage, example, btn) {
       const fb = btn.parentElement.querySelector(".feedback");
       if (choice === answer) {
         fb.innerHTML = `<span class='correct'>正解です！</span><br>
-        💡 說明：${exp.explain}<br>
-        📝 例句：${exp.example.jp}<br>
-        📘 翻譯：${exp.example.zh}<br>
-        ⏰ 使用時機：${exp.whenToUse}`;
-        streak++; love += 5;
+          ✅ 中文解析：${exp}<br>
+          🧭 使用情境：${usage}<br>
+          💬 例句：${example}`;
+        streak++;
+        love += 5;
       } else if (!rescueUsed) {
-        fb.innerHTML = `<span class='incorrect'>錯了…不過Keita說：「再挑戰一次吧♡」</span>`;
+        fb.innerHTML = `<span class='incorrect'>錯了…但 Keita 說：「再挑戰一次吧♡」`;
         rescueUsed = true;
         return;
       } else {
         fb.innerHTML = `<span class='incorrect'>不正解。正解是：${answer}。<br>
-        💡 說明：${exp.explain}<br>
-        📝 例句：${exp.example.jp}<br>
-        📘 翻譯：${exp.example.zh}<br>
-        ⏰ 使用時機：${exp.whenToUse}`;
+          ✅ 中文解析：${exp}<br>
+          🧭 使用情境：${usage}<br>
+          💬 例句：${example}`;
         streak = 0;
       }
 
       hp = Math.max(10, hp - 2);
       document.getElementById("hp").textContent = hp;
       document.getElementById("love").textContent = love;
+
       triggerEvent(streak);
     }
 
