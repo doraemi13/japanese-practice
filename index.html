@@ -56,30 +56,23 @@
         const block = document.createElement("div");
         block.className = "question";
         block.innerHTML = `<p>${q.q}</p>` + q.opts.map(opt =>
-          `<button onclick="checkAnswer('${opt}','${q.a}','${q.exp}','${q.usage}','${q.example}',this)"> ${opt}</button>`
+          `<button onclick="checkAnswer('${opt}','${q.a}','${q.exp}','${q.usage}','${q.jp}','fb-${i}',this)"> ${opt}</button>`
         ).join('') + `<div class='feedback' id='fb-${i}'></div>`;
         container.appendChild(block);
       });
     }
 
-    function checkAnswer(choice, answer, exp, usage, example, btn) {
-      const fb = btn.parentElement.querySelector(".feedback");
+    function checkAnswer(choice, answer, exp, usage, jp, fbId, btn) {
+      const fb = document.getElementById(fbId);
       if (choice === answer) {
-        fb.innerHTML = `<span class='correct'>正解です！</span><br>
-          ✅ 中文解析：${exp}<br>
-          🧭 使用情境：${usage}<br>
-          💬 例句：${example}`;
-        streak++;
-        love += 5;
+        fb.innerHTML = `<span class='correct'>正解です！</span><br>解析：${exp}<br>使用時機：${usage}<br>例句：${jp}`;
+        streak++; love += 5;
       } else if (!rescueUsed) {
-        fb.innerHTML = `<span class='incorrect'>錯了…但 Keita 說：「再挑戰一次吧♡」`;
+        fb.innerHTML = `<span class='incorrect'>錯了…但 Keita 說：「再挑戰一次吧♡」</span>`;
         rescueUsed = true;
         return;
       } else {
-        fb.innerHTML = `<span class='incorrect'>不正解。正解是：${answer}。<br>
-          ✅ 中文解析：${exp}<br>
-          🧭 使用情境：${usage}<br>
-          💬 例句：${example}`;
+        fb.innerHTML = `<span class='incorrect'>不正解。正解是：${answer}。<br>解析：${exp}<br>使用時機：${usage}<br>例句：${jp}</span>`;
         streak = 0;
       }
 
