@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -22,14 +21,13 @@
   <h1>📘 日文 RPG 學習系統</h1>
 
   <label for="day">選擇練習日：</label>
-<select id="day" onchange="loadDay(this.value)">
-  <script>
-    for (let i = 1; i <= 30; i++) {
-      document.write(`<option value="${i}">Day ${i}</option>`);
-    }
-  </script>
-</select>
-
+  <select id="day" onchange="loadDay(this.value)">
+    <script>
+      for (let i = 1; i <= 30; i++) {
+        document.write(`<option value="${i}">Day ${i}</option>`);
+      }
+    </script>
+  </select>
 
   <div id="quiz-area"></div>
   <div id="feedback-summary"></div>
@@ -43,30 +41,22 @@
 
   <div id="npc">町田啓太：「今日も君なら、できるって信じてる。」</div>
 
+  <!-- 題庫檔案放這裡，記得與 index.html 同目錄 -->
   <script src="days_full.js"></script>
+
   <script>
     let streak = 0, love = 0, hp = 100, rescueUsed = false;
-
-    const days = {
-      1: [
-        {q: "Q1. 『〜わけではない』表示什麼？", a: "柔和否定", opts: ["決定斷言", "柔和否定", "強烈反對", "客觀敘述"], exp: "非完全否定，為緩和語氣常用表現"},
-        {q: "Q2. 『恐れ入ります』是？", a: "最禮貌的道歉用語", opts: ["隨便", "比較粗", "最禮貌的道歉用語", "命令句"], exp: "適用於對上司或正式場合的婉轉致歉"}
-      ],
-      2: [
-        {q: "Q1. 『つつも』語感是？", a: "雖然～但是～", opts: ["對比", "因果", "平行", "雖然～但是～"], exp: "表一邊進行某事，一邊心裡有其他想法"},
-        {q: "Q2. 『無理やり』是什麼？", a: "強制地", opts: ["緩慢地", "自然地", "強制地", "舒服地"], exp: "多為負面語感，表示強迫"}
-      ],
-      3: [
-        {q: "Q1. 『貴社』和『御社』差別？", a: "貴社為書面用語", opts: ["御社是書面", "貴社為書面用語", "都一樣", "貴社是口語"], exp: "口語為御社，正式書面使用貴社"},
-        {q: "Q2. 『ついに』表示？", a: "終於", opts: ["大概", "結果", "忽然", "終於"], exp: "表示期待的狀況終於實現"}
-      ]
-    };
 
     function loadDay(day) {
       const quiz = days[day];
       const container = document.getElementById("quiz-area");
       const summary = document.getElementById("feedback-summary");
-      container.innerHTML = ""; summary.innerHTML = ""; streak = 0;
+      container.innerHTML = ""; summary.innerHTML = ""; streak = 0; rescueUsed = false;
+
+      if (!quiz) {
+        container.innerHTML = "<p>⚠️ 尚未建立此日的題庫。</p>";
+        return;
+      }
 
       quiz.forEach((q, i) => {
         const block = document.createElement("div");
@@ -112,6 +102,7 @@
       }
     }
 
+    // 預設載入 Day 1
     loadDay("1");
   </script>
 </body>
