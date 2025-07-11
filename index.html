@@ -2,89 +2,113 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>日文 RPG 學習：Day 1</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>日文 RPG 學習系統</title>
   <style>
-    body { font-family: sans-serif; padding: 1em; background-color: #fff8e1; }
-    h1 { font-size: 1.5em; margin-bottom: 0.2em; }
-    #cat-area { margin-top: 1em; text-align: center; }
-    #cat-area img { width: 150px; }
+    body { font-family: sans-serif; background: #fffdf5; padding: 1em; }
+    h1 { font-size: 1.8em; }
+    select, button { font-size: 1em; padding: 0.4em; margin: 0.5em 0; }
     .question { margin: 1em 0; }
-    .choices button { display: block; margin: 0.3em 0; }
-    .feedback { margin-top: 0.5em; font-weight: bold; }
+    .feedback { font-weight: bold; margin-top: 0.3em; }
     .correct { color: green; }
     .incorrect { color: red; }
-    #npc { font-style: italic; margin-top: 1em; padding: 1em; border: 1px dashed #888; background: #fff; }
-    #score-display { margin-top: 1em; font-weight: bold; }
-    input[type="text"] { width: 100%; padding: 5px; }
-    #footer { margin-top: 2em; font-size: 0.9em; text-align: center; color: #777; }
+    #pet { text-align: center; margin-top: 2em; }
+    #pet img { width: 140px; }
+    #npc { margin-top: 1em; padding: 1em; background: #fff; border: 1px dashed #aaa; }
   </style>
 </head>
 <body>
-  <h1>📘 今日挑戰（Day 1）</h1>
-  <div id="npc">町田啓太：「無理せず、でも一歩ずつだよ。」</div>
+  <h1>📘 日文 RPG 學習系統</h1>
 
-  <div id="cat-area">
-    <p>🐱 橘貓：けいたくん</p>
-    <img src="https://i.imgur.com/Gn7jGX8.png" alt="橘貓">
-    <p>🍗 今日HP：<span id="cat-hp">100</span> ／ 食物剩餘：<span id="food">1</span></p>
-    <button onclick="feedCat()">🍣 餵食貓咪（消耗1份）</button>
-    <p id="cat-response"></p>
+  <label for="day">選擇練習日：</label>
+  <select id="day" onchange="loadDay(this.value)">
+    <option value="1">Day 1</option>
+    <option value="2">Day 2</option>
+    <option value="3">Day 3</option>
+  </select>
+
+  <div id="quiz-area"></div>
+  <div id="feedback-summary"></div>
+
+  <div id="pet">
+    <h2>🐱 Keita 狀態</h2>
+    <img src="images/cat01.png" alt="Keita">
+    <p>HP：<span id="hp">100</span> ／ 親密度：<span id="love">0</span></p>
+    <p id="pet-event"></p>
   </div>
 
-  <div id="quiz"></div>
-  <div id="score-display"></div>
-
-  <div id="footer">Copyright © 日文 RPG 學習系統</div>
+  <div id="npc">町田啓太：「今日も君なら、できるって信じてる。」</div>
 
   <script>
-    const questions = [
-      { q: "Q1. 『〜わけではない』表示什麼？", a: "柔和否定", options: ["決定斷言", "柔和否定", "強烈反對", "客觀敘述"] },
-      { q: "Q2. 對上司最自然的道歉語？", a: "恐れ入ります、遅れてしまいました。", options: ["すみません、遅くなりました。", "ごめんなさい、遅れました。", "恐れ入ります、遅れてしまいました。", "ちょっと遅れちゃって…すみません。"] },
-      { q: "Q3. 『無理やり』意思是？", a: "強制的に", options: ["とてもゆっくり", "意図的に丁寧に", "強制的に", "自由に選んで"] },
-      { q: "Q4. 『貴社』『御社』哪個用於書面？", a: "貴社", options: ["御社", "貴社", "隨便都行", "反過來"] },
-      { q: "Q5. 『〜つつも』表什麼意思？", a: "雖然～但是～", options: ["一邊做～", "雖然～但是～", "因為～所以～", "一定是～"] },
-    ];
+    let streak = 0, love = 0, hp = 100, rescueUsed = false;
 
-    let score = 0;
-    const quizArea = document.getElementById("quiz");
-    questions.forEach((q, i) => {
-      const div = document.createElement("div");
-      div.className = "question";
-      div.innerHTML = `<p>${q.q}</p>` +
-        q.options.map(opt => `<button onclick="check(this, '${q.a}', ${i})">${opt}</button>`).join('') +
-        `<div class='feedback' id='fb-${i}'></div>`;
-      quizArea.appendChild(div);
-    });
+    const days = {
+      1: [
+        {q: "Q1. 『〜わけではない』表示什麼？", a: "柔和否定", opts: ["決定斷言", "柔和否定", "強烈反對", "客觀敘述"], exp: "非完全否定，為緩和語氣常用表現"},
+        {q: "Q2. 『恐れ入ります』是？", a: "最禮貌的道歉用語", opts: ["隨便", "比較粗", "最禮貌的道歉用語", "命令句"], exp: "適用於對上司或正式場合的婉轉致歉"}
+      ],
+      2: [
+        {q: "Q1. 『つつも』語感是？", a: "雖然～但是～", opts: ["對比", "因果", "平行", "雖然～但是～"], exp: "表一邊進行某事，一邊心裡有其他想法"},
+        {q: "Q2. 『無理やり』是什麼？", a: "強制地", opts: ["緩慢地", "自然地", "強制地", "舒服地"], exp: "多為負面語感，表示強迫"}
+      ],
+      3: [
+        {q: "Q1. 『貴社』和『御社』差別？", a: "貴社為書面用語", opts: ["御社是書面", "貴社為書面用語", "都一樣", "貴社是口語"], exp: "口語為御社，正式書面使用貴社"},
+        {q: "Q2. 『ついに』表示？", a: "終於", opts: ["大概", "結果", "忽然", "終於"], exp: "表示期待的狀況終於實現"}
+      ]
+    };
 
-    function check(btn, correct, i) {
-      const fb = document.getElementById(`fb-${i}`);
-      if (btn.textContent === correct) {
-        fb.textContent = '正解です！';
-        fb.className = 'feedback correct';
-        score += 10;
-      } else {
-        fb.textContent = `不正解。正解は：${correct}`;
-        fb.className = 'feedback incorrect';
-      }
-      document.getElementById("score-display").textContent = `🎯 獲得分數：${score} / 50`;
+    function loadDay(day) {
+      const quiz = days[day];
+      const container = document.getElementById("quiz-area");
+      const summary = document.getElementById("feedback-summary");
+      container.innerHTML = ""; summary.innerHTML = ""; streak = 0;
+
+      quiz.forEach((q, i) => {
+        const block = document.createElement("div");
+        block.className = "question";
+        block.innerHTML = `<p>${q.q}</p>` + q.opts.map(opt =>
+          `<button onclick="checkAnswer('${opt}','${q.a}','${q.exp}',this)"> ${opt}</button>`
+        ).join('') + `<div class='feedback' id='fb-${i}'></div>`;
+        container.appendChild(block);
+      });
     }
 
-    let food = 1;
-    let hp = 100;
-    function feedCat() {
-      const res = document.getElementById("cat-response");
-      if (food > 0) {
-        food--;
-        hp = Math.min(100, hp + 10);
-        res.textContent = "喵～ 好吃！謝謝你♡";
+    function checkAnswer(choice, answer, exp, btn) {
+      const fb = btn.parentElement.querySelector(".feedback");
+      if (choice === answer) {
+        fb.innerHTML = `<span class='correct'>正解です！</span><br>解析：${exp}`;
+        streak++; love += 5;
+      } else if (!rescueUsed) {
+        fb.innerHTML = `<span class='incorrect'>錯了…不過Keita說：「再挑戰一次吧♡」</span>`;
+        rescueUsed = true;
+        return;
       } else {
-        res.textContent = "……沒東西了喵(´・ω・`)";
+        fb.innerHTML = `<span class='incorrect'>不正解。正解是：${answer}。<br>解析：${exp}</span>`;
+        streak = 0;
       }
-      document.getElementById("food").textContent = food;
-      document.getElementById("cat-hp").textContent = hp;
+
+      hp = Math.max(10, hp - 2);
+      document.getElementById("hp").textContent = hp;
+      document.getElementById("love").textContent = love;
+
+      triggerEvent(streak);
     }
+
+    function triggerEvent(streak) {
+      const eventMsg = document.getElementById("pet-event");
+      if (streak === 5) {
+        eventMsg.textContent = "🐾 Keita 輕輕貼上了你身旁…貼貼成功！";
+      } else if (streak === 10) {
+        eventMsg.textContent = "🐾 Keita 和 AKA醬抱著搖搖，好甜！";
+      } else if (streak === 15) {
+        eventMsg.textContent = "🐾 Keita 和 AKA醬開始互相舔毛，好親密！";
+      } else if (streak === 20) {
+        eventMsg.textContent = "🐾 Keita 親親了 AKA醬的臉頰，戀愛氛圍爆發！";
+      }
+    }
+
+    loadDay("1");
   </script>
 </body>
 </html>
