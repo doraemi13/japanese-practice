@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>日文 RPG 學習：Day 1</title>
+  <style>
+    body { font-family: sans-serif; padding: 1em; background-color: #fff8e1; }
+    h1 { font-size: 1.5em; margin-bottom: 0.2em; }
+    #cat-area { margin-top: 1em; text-align: center; }
+    #cat-area img { width: 150px; }
+    .question { margin: 1em 0; }
+    .choices button { display: block; margin: 0.3em 0; }
+    .feedback { margin-top: 0.5em; font-weight: bold; }
+    .correct { color: green; }
+    .incorrect { color: red; }
+    #npc { font-style: italic; margin-top: 1em; padding: 1em; border: 1px dashed #888; background: #fff; }
+    #score-display { margin-top: 1em; font-weight: bold; }
+    input[type="text"] { width: 100%; padding: 5px; }
+    #footer { margin-top: 2em; font-size: 0.9em; text-align: center; color: #777; }
+  </style>
+</head>
+<body>
+  <h1>📘 今日挑戰（Day 1）</h1>
+  <div id="npc">町田啓太：「無理せず、でも一歩ずつだよ。」</div>
+
+  <div id="cat-area">
+    <p>🐱 橘貓：けいたくん</p>
+    <img src="https://i.imgur.com/Gn7jGX8.png" alt="橘貓">
+    <p>🍗 今日HP：<span id="cat-hp">100</span> ／ 食物剩餘：<span id="food">1</span></p>
+    <button onclick="feedCat()">🍣 餵食貓咪（消耗1份）</button>
+    <p id="cat-response"></p>
+  </div>
+
+  <div id="quiz"></div>
+  <div id="score-display"></div>
+
+  <div id="footer">Copyright © 日文 RPG 學習系統</div>
+
+  <script>
+    const questions = [
+      { q: "Q1. 『〜わけではない』表示什麼？", a: "柔和否定", options: ["決定斷言", "柔和否定", "強烈反對", "客觀敘述"] },
+      { q: "Q2. 對上司最自然的道歉語？", a: "恐れ入ります、遅れてしまいました。", options: ["すみません、遅くなりました。", "ごめんなさい、遅れました。", "恐れ入ります、遅れてしまいました。", "ちょっと遅れちゃって…すみません。"] },
+      { q: "Q3. 『無理やり』意思是？", a: "強制的に", options: ["とてもゆっくり", "意図的に丁寧に", "強制的に", "自由に選んで"] },
+      { q: "Q4. 『貴社』『御社』哪個用於書面？", a: "貴社", options: ["御社", "貴社", "隨便都行", "反過來"] },
+      { q: "Q5. 『〜つつも』表什麼意思？", a: "雖然～但是～", options: ["一邊做～", "雖然～但是～", "因為～所以～", "一定是～"] },
+    ];
+
+    let score = 0;
+    const quizArea = document.getElementById("quiz");
+    questions.forEach((q, i) => {
+      const div = document.createElement("div");
+      div.className = "question";
+      div.innerHTML = `<p>${q.q}</p>` +
+        q.options.map(opt => `<button onclick="check(this, '${q.a}', ${i})">${opt}</button>`).join('') +
+        `<div class='feedback' id='fb-${i}'></div>`;
+      quizArea.appendChild(div);
+    });
+
+    function check(btn, correct, i) {
+      const fb = document.getElementById(`fb-${i}`);
+      if (btn.textContent === correct) {
+        fb.textContent = '正解です！';
+        fb.className = 'feedback correct';
+        score += 10;
+      } else {
+        fb.textContent = `不正解。正解は：${correct}`;
+        fb.className = 'feedback incorrect';
+      }
+      document.getElementById("score-display").textContent = `🎯 獲得分數：${score} / 50`;
+    }
+
+    let food = 1;
+    let hp = 100;
+    function feedCat() {
+      const res = document.getElementById("cat-response");
+      if (food > 0) {
+        food--;
+        hp = Math.min(100, hp + 10);
+        res.textContent = "喵～ 好吃！謝謝你♡";
+      } else {
+        res.textContent = "……沒東西了喵(´・ω・`)";
+      }
+      document.getElementById("food").textContent = food;
+      document.getElementById("cat-hp").textContent = hp;
+    }
+  </script>
+</body>
+</html>
