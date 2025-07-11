@@ -22,11 +22,14 @@
   <h1>📘 日文 RPG 學習系統</h1>
 
   <label for="day">選擇練習日：</label>
-  <select id="day" onchange="loadDay(this.value)">
-    <option value="1">Day 1</option>
-    <option value="2">Day 2</option>
-    <option value="3">Day 3</option>
-  </select>
+<select id="day" onchange="loadDay(this.value)">
+  <script>
+    for (let i = 1; i <= 30; i++) {
+      document.write(`<option value="${i}">Day ${i}</option>`);
+    }
+  </script>
+</select>
+
 
   <div id="quiz-area"></div>
   <div id="feedback-summary"></div>
@@ -40,6 +43,7 @@
 
   <div id="npc">町田啓太：「今日も君なら、できるって信じてる。」</div>
 
+  <script src="days_full.js"></script>
   <script>
     let streak = 0, love = 0, hp = 100, rescueUsed = false;
 
